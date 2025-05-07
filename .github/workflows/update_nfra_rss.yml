@@ -1,0 +1,38 @@
+name: Update NFRA RSS Feed
+
+on:
+  schedule:
+    # 每两小时的第30分钟执行 (UTC 时间)
+    - cron: '30 */2 * * *'
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  build-and-commit-rss:
+    runs-on: ubuntu-latest
+    permissions:      # 授予写权限
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' 
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Setup Chrome and ChromeDriver
+        uses: browser-actions/setup-chrome@v1 
+
+      - name: Run Python Script to Generate RSS
+        run: python nfra_rss_generator.py # <--- 使用新的脚本名
+
+      - name: Commit and Push Updated RSS File
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Automated NFRA RSS feed update"
+          file_pattern: nfra_rss.xml # <--- 使用新的XML文件名
