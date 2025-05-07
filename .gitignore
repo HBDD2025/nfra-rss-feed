@@ -1,0 +1,8 @@
+venv/
+__pycache__/
+*.pyc
+selenium_page_content.html
+selenium_page_content_fail.html
+cron_rss_update.log 
+nfra_rss.xml
+.DS_Store
